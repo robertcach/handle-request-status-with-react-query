@@ -7,16 +7,16 @@ import { User, UsersResponse } from './interfaces';
 
 function App() {
   const [users, setUsers] = useState<User[]>([]);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const getUserRequest = async () => {
-      const data: UsersResponse = await getUsers('1');
-
+      const data: UsersResponse = await getUsers(page.toString());
       setUsers(data.data);
     };
 
     getUserRequest();
-  }, []);
+  }, [page]);
 
   return (
     <>
@@ -35,6 +35,7 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+      <button onClick={() => setPage((prev) => prev + 1)}>Show more</button>
     </>
   );
 }
