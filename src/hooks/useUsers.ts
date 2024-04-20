@@ -6,7 +6,7 @@ export const useUsers = () => {
   const { isLoading, isError, data, fetchNextPage } =
     useInfiniteQuery<UsersResponse>({
       queryKey: ['users'],
-      queryFn: async ({ pageParam }) => await getUsers(pageParam as string),
+      queryFn: ({ pageParam }) => getUsers(pageParam as number),
       getNextPageParam: (lastPage) => lastPage.page + 1,
       initialPageParam: 1,
     });
