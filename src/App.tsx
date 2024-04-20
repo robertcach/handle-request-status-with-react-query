@@ -8,8 +8,8 @@ import { User, UsersResponse } from './interfaces';
 function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<UsersResponse | null>(null);
-  const [users, setUsers] = useState<User[]>(data?.data ?? []);
-  const [page, setPage] = useState(data?.page ?? 1);
+  const [users, setUsers] = useState<User[]>([]);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     setIsLoading(true);
@@ -17,7 +17,7 @@ function App() {
       try {
         const data: UsersResponse = await getUsers(page.toString());
         setData(data);
-        setUsers((prev) => [...prev, ...data.data]);
+        setUsers([...users, ...data.data]);
       } catch (error) {
         console.error(error);
       } finally {
@@ -33,8 +33,8 @@ function App() {
     return <p>Loading...</p>;
   }
 
-  if (!data) {
-    <p>No data</p>;
+  if (!users.length) {
+    <p>There is no users</p>;
   }
 
   return (
@@ -55,7 +55,12 @@ function App() {
         Click on the Vite and React logos to learn more
       </p>
 
-      <button onClick={() => setPage((prev) => prev + 1)}>Show more</button>
+      <button
+        disabled={data?.total_pages === page}
+        onClick={() => setPage((prev) => prev + 1)}
+      >
+        Show more
+      </button>
     </>
   );
 }
