@@ -44,16 +44,12 @@ function App() {
       {users?.map((user) => (
         <p key={user.id}>{user.first_name}</p>
       ))}
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
 
-      <button
-        disabled={currentPage === totalPages}
-        onClick={async () => await fetchNextPage()}
-      >
-        Show more
-      </button>
+      {currentPage === totalPages ? (
+        <p>There is no more pages</p>
+      ) : (
+        <button onClick={async () => await fetchNextPage()}>Show more</button>
+      )}
     </>
   );
 }
