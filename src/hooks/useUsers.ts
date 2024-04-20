@@ -12,8 +12,9 @@ export const useUsers = () => {
     });
 
   const users: User[] = data?.pages?.flatMap((page) => page.data) || [];
-  const currentPage = data?.pages[data.pages.length - 1].page;
-  const totalPages = data?.pages[data.pages.length - 1].total_pages;
+  const isLastPage =
+    data?.pages[data.pages.length - 1].page ===
+    data?.pages[data.pages.length - 1].total_pages;
 
-  return { isLoading, isError, users, currentPage, totalPages, fetchNextPage };
+  return { isLoading, isError, users, isLastPage, fetchNextPage };
 };

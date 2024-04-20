@@ -4,8 +4,7 @@ import './App.css';
 import { useUsers } from './hooks/useUsers';
 
 function App() {
-  const { isLoading, isError, users, currentPage, totalPages, fetchNextPage } =
-    useUsers();
+  const { isLoading, isError, users, isLastPage, fetchNextPage } = useUsers();
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -34,7 +33,7 @@ function App() {
         <p key={user.id}>{user.first_name}</p>
       ))}
 
-      {currentPage === totalPages ? (
+      {isLastPage ? (
         <p>There is no more users</p>
       ) : (
         <button onClick={async () => await fetchNextPage()}>Show more</button>
