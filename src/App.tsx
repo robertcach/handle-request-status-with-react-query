@@ -3,11 +3,12 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 import { getUsers } from './services/getUsers';
-import { UsersResponse } from './interfaces';
+import { User, UsersResponse } from './interfaces';
 
 function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<UsersResponse | null>(null);
+  const [users, setUsers] = useState<User[]>(data?.data ?? []);
   const [page, setPage] = useState(data?.page ?? 1);
 
   useEffect(() => {
@@ -16,6 +17,7 @@ function App() {
       try {
         const data: UsersResponse = await getUsers(page.toString());
         setData(data);
+        setUsers((prev) => [...prev, ...data.data]);
       } catch (error) {
         console.error(error);
       } finally {
@@ -24,6 +26,7 @@ function App() {
     };
 
     getUserRequest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 
   if (isLoading) {
@@ -45,7 +48,7 @@ function App() {
         </a>
       </div>
       <h1>Vite + React</h1>
-      {data?.data?.map((user) => (
+      {users?.map((user) => (
         <p key={user.id}>{user.first_name}</p>
       ))}
       <p className="read-the-docs">
