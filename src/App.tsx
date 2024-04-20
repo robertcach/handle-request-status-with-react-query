@@ -1,33 +1,22 @@
-import { useEffect, useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 import { getUsers } from './services/getUsers';
 import { User, UsersResponse } from './interfaces';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 function App() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState<UsersResponse | null>(null);
-  const [users, setUsers] = useState<User[]>([]);
-  const [page, setPage] = useState(1);
+  const { isLoading, isError, data, fetchNextPage } =
+    useInfiniteQuery<UsersResponse>({
+      queryKey: ['users'],
+      queryFn: async ({ pageParam }) => await getUsers(pageParam as string),
+      getNextPageParam: (lastPage) => lastPage.page + 1,
+      initialPageParam: 1,
+    });
 
-  useEffect(() => {
-    setIsLoading(true);
-    const getUserRequest = async () => {
-      try {
-        const data: UsersResponse = await getUsers(page.toString());
-        setData(data);
-        setUsers([...users, ...data.data]);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    getUserRequest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+  const users: User[] = data?.pages?.flatMap((page) => page.data) || [];
+  const currentPage = data?.pages[data.pages.length - 1].page;
+  const totalPages = data?.pages[data.pages.length - 1].total_pages;
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -35,6 +24,10 @@ function App() {
 
   if (!users.length) {
     <p>There is no users</p>;
+  }
+
+  if (isError) {
+    return <p>There was an error</p>;
   }
 
   return (
@@ -56,8 +49,8 @@ function App() {
       </p>
 
       <button
-        disabled={data?.total_pages === page}
-        onClick={() => setPage((prev) => prev + 1)}
+        disabled={currentPage === totalPages}
+        onClick={async () => await fetchNextPage()}
       >
         Show more
       </button>
