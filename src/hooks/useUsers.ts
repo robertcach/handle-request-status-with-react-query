@@ -9,6 +9,7 @@ export const useUsers = () => {
       queryFn: ({ pageParam }) => getUsers(pageParam as number),
       getNextPageParam: (lastPage) => lastPage.page + 1,
       initialPageParam: 1,
+      refetchOnWindowFocus: false,
     });
 
   const users: User[] = data?.pages?.flatMap((page) => page.data) || [];
