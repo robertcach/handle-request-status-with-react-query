@@ -1,22 +1,11 @@
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
-import { getUsers } from './services/getUsers';
-import { User, UsersResponse } from './interfaces';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useUsers } from './hooks/useUsers';
 
 function App() {
-  const { isLoading, isError, data, fetchNextPage } =
-    useInfiniteQuery<UsersResponse>({
-      queryKey: ['users'],
-      queryFn: async ({ pageParam }) => await getUsers(pageParam as string),
-      getNextPageParam: (lastPage) => lastPage.page + 1,
-      initialPageParam: 1,
-    });
-
-  const users: User[] = data?.pages?.flatMap((page) => page.data) || [];
-  const currentPage = data?.pages[data.pages.length - 1].page;
-  const totalPages = data?.pages[data.pages.length - 1].total_pages;
+  const { isLoading, isError, users, currentPage, totalPages, fetchNextPage } =
+    useUsers();
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -46,7 +35,7 @@ function App() {
       ))}
 
       {currentPage === totalPages ? (
-        <p>There is no more pages</p>
+        <p>There is no more users</p>
       ) : (
         <button onClick={async () => await fetchNextPage()}>Show more</button>
       )}
